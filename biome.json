@@ -12,6 +12,7 @@
       "!**/.next",
       "!**/.turbo",
       "!**/node_modules",
+      "!**/next-env.d.ts",
       "!**/*.md",
       "!pnpm-lock.yaml"
     ]
@@ -35,7 +36,12 @@
       "recommended": true,
       "suspicious": {
         "noExplicitAny": "error",
-        "noConsole": { "level": "warn", "options": { "allow": ["error", "warn"] } }
+        "noConsole": {
+          "level": "warn",
+          "options": {
+            "allow": ["error", "warn"]
+          }
+        }
       },
       "style": {
         "useConst": "error",
@@ -58,7 +64,13 @@
   "overrides": [
     {
       "includes": ["apps/**", "tooling/**", "packages/db-postgres/src/migrate.ts"],
-      "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
     }
   ]
 }
