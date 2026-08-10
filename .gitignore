@@ -22,6 +22,9 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 
+# Claude Code agent worktrees/session state
+.claude/
+
 # Local development data (encrypted local store, postgres volume)
 .data/
 *.sqlite
