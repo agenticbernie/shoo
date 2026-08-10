@@ -1,13 +1,13 @@
 import {
   type ContextPackId,
+  fail,
   type Instant,
+  ok,
   type ProjectId,
   type Result,
   type RetrievalRequestId,
   type RevisionId,
   type WorkUnitId,
-  fail,
-  ok,
 } from '@shoo/domain-shared';
 
 /**
@@ -36,9 +36,13 @@ export type ContextPackSection = (typeof CONTEXT_PACK_SECTIONS)[number];
  * unsafe (docs/30 "token budget cannot remove the objective, next action, or conflict
  * notice required for safe continuation").
  */
-export const NON_DROPPABLE_SECTIONS: ReadonlySet<ContextPackSection> = new Set<ContextPackSection>(
-  ['identity', 'objective_and_state', 'unresolved', 'recommended_next_action', 'manifest'],
-);
+export const NON_DROPPABLE_SECTIONS: ReadonlySet<ContextPackSection> = new Set<ContextPackSection>([
+  'identity',
+  'objective_and_state',
+  'unresolved',
+  'recommended_next_action',
+  'manifest',
+]);
 
 export type Completeness = 'complete' | 'partial' | 'unknown';
 export type Freshness = 'current' | 'stale' | 'partial' | 'unknown';

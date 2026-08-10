@@ -1,10 +1,5 @@
-import { type Result, fail, ok } from '@shoo/domain-shared';
-import {
-  type Action,
-  requiresPreviewToken,
-  requiresStepUp,
-  roleAllows,
-} from './roles.js';
+import { fail, ok, type Result } from '@shoo/domain-shared';
+import { type Action, requiresPreviewToken, requiresStepUp, roleAllows } from './roles.js';
 import type { AuthorizationContext } from './subject.js';
 import { type VisibilityScope, withinVisibilityCeiling } from './visibility.js';
 

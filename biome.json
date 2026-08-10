@@ -8,10 +8,10 @@
   "files": {
     "includes": [
       "**",
-      "!**/dist/**",
-      "!**/.next/**",
-      "!**/.turbo/**",
-      "!**/node_modules/**",
+      "!**/dist",
+      "!**/.next",
+      "!**/.turbo",
+      "!**/node_modules",
       "!**/*.md",
       "!pnpm-lock.yaml"
     ]
@@ -43,7 +43,8 @@
         "useImportType": "error"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "useLiteralKeys": "off"
       }
     }
   },

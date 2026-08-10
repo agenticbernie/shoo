@@ -16,6 +16,7 @@
   "dependencies": {
     "@shoo/application": "workspace:*",
     "@shoo/config": "workspace:*",
+    "@shoo/contracts-common": "workspace:*",
     "@shoo/contracts-http": "workspace:*",
     "@shoo/contracts-mcp": "workspace:*",
     "@shoo/observability": "workspace:*",

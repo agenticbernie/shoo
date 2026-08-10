@@ -9,7 +9,10 @@ import {
 } from './payloads.js';
 
 /** A fully typed, validated event: envelope plus its declared payload. */
-export type ShooEvent<K extends EventType = EventType> = Omit<EventEnvelopeBase, 'payload' | 'event_type'> & {
+export type ShooEvent<K extends EventType = EventType> = Omit<
+  EventEnvelopeBase,
+  'payload' | 'event_type'
+> & {
   readonly event_type: K;
   readonly payload: EventPayloadMap[K];
 };
@@ -48,7 +51,9 @@ export function parseEvent(input: unknown): EventParseResult {
   if (!payload.success) {
     return {
       outcome: 'rejected',
-      issues: payload.error.issues.map((issue) => `payload.${issue.path.join('.')}: ${issue.message}`),
+      issues: payload.error.issues.map(
+        (issue) => `payload.${issue.path.join('.')}: ${issue.message}`,
+      ),
     };
   }
 

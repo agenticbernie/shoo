@@ -6,8 +6,8 @@
  * immutable revision plus an explicit lineage edge.
  */
 export * from './authority.js';
-export * from './evidence.js';
-export * from './supersession.js';
-export * from './memory.js';
 export * from './conflict.js';
+export * from './evidence.js';
+export * from './memory.js';
 export * from './resolver.js';
+export * from './supersession.js';

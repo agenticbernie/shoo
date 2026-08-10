@@ -43,12 +43,7 @@ export interface SupportSubject {
   readonly elevationTicket: string;
 }
 
-export type Subject =
-  | UserSubject
-  | DeviceSubject
-  | AgentSubject
-  | WorkerSubject
-  | SupportSubject;
+export type Subject = UserSubject | DeviceSubject | AgentSubject | WorkerSubject | SupportSubject;
 
 export function subjectUserId(subject: Subject): UserId | null {
   switch (subject.kind) {

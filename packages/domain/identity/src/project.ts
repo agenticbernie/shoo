@@ -1,15 +1,15 @@
 import {
   type AggregateVersion,
+  checkExpectedVersion,
+  fail,
   INITIAL_VERSION,
   type Instant,
+  nextVersion,
   type OrganizationId,
+  ok,
   type ProjectId,
   type Result,
   type Versioned,
-  checkExpectedVersion,
-  fail,
-  nextVersion,
-  ok,
 } from '@shoo/domain-shared';
 import { normalizeSlug } from './organization.js';
 import type { VisibilityScope } from './visibility.js';
@@ -134,7 +134,11 @@ export function beginProjectDeletion(
   if (project.retention.legalHold) {
     return fail('POLICY_DENIED', 'project is under legal hold and cannot be deleted');
   }
-  return ok({ ...project, status: 'deleting', version: nextVersion(project.version) });
+  return ok({
+    ...project,
+    status: 'deleting',
+    version: nextVersion(project.version),
+  });
 }
 
 export function isProjectWritable(project: Project): boolean {

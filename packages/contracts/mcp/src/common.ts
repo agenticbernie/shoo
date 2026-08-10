@@ -58,7 +58,10 @@ export const toolCommonResult = z.object({
   schema_version: schemaVersion.default(MCP_CONTRACT_VERSION),
   operation: toolOperation.default({ operation_id: null, poll_after_ms: 1000 }),
   freshness: freshness.default('current'),
-  completeness: completeness.default({ state: 'complete', missing_capabilities: [] }),
+  completeness: completeness.default({
+    state: 'complete',
+    missing_capabilities: [],
+  }),
   warnings: z.array(warning).max(50).default([]),
   citations: z.array(citation).max(200).default([]),
 });

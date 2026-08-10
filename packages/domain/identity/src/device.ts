@@ -1,19 +1,19 @@
 import {
   type AggregateVersion,
   type BindingId,
+  checkExpectedVersion,
   type DelegateId,
   type DeviceId,
+  fail,
   INITIAL_VERSION,
   type Instant,
   type NamespaceId,
+  nextVersion,
+  ok,
   type ProjectId,
   type Result,
   type UserId,
   type Versioned,
-  checkExpectedVersion,
-  fail,
-  nextVersion,
-  ok,
 } from '@shoo/domain-shared';
 
 /**
@@ -78,7 +78,12 @@ export function revokeDevice(
   if (device.status === 'revoked') {
     return fail('ALREADY_TERMINAL', 'device is already revoked');
   }
-  return ok({ ...device, status: 'revoked', revokedAt: at, version: nextVersion(device.version) });
+  return ok({
+    ...device,
+    status: 'revoked',
+    revokedAt: at,
+    version: nextVersion(device.version),
+  });
 }
 
 export type MemwalNetwork = 'mainnet' | 'testnet' | 'devnet' | 'localnet';
@@ -185,7 +190,9 @@ export function addDelegate(
       status: binding.status,
     });
   }
-  if (binding.delegates.some((d) => d.deviceId === delegate.deviceId && d.onchainStatus !== 'removed')) {
+  if (
+    binding.delegates.some((d) => d.deviceId === delegate.deviceId && d.onchainStatus !== 'removed')
+  ) {
     return fail('INVARIANT_VIOLATION', 'device already has an active delegate on this binding');
   }
   return ok({
@@ -239,7 +246,11 @@ export function registerNamespace(
       return ok(binding);
     }
   }
-  if (binding.namespaces.some((n) => n.namespace === namespace.namespace && n.projectId !== namespace.projectId)) {
+  if (
+    binding.namespaces.some(
+      (n) => n.namespace === namespace.namespace && n.projectId !== namespace.projectId,
+    )
+  ) {
     return fail('INVARIANT_VIOLATION', 'namespace is already bound to another project');
   }
   return ok({

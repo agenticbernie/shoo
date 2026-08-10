@@ -1,4 +1,4 @@
-import { CamelCasePlugin, Kysely, PostgresDialect, type Transaction, sql } from 'kysely';
+import { CamelCasePlugin, Kysely, PostgresDialect, sql, type Transaction } from 'kysely';
 import pg from 'pg';
 import type { Database } from './schema.js';
 
@@ -49,7 +49,8 @@ export interface TenantContext {
   readonly actorUserId?: string | null;
 }
 
-const UUID_PATTERN = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const UUID_PATTERN =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 function assertUuid(value: string, field: string): void {
   if (!UUID_PATTERN.test(value)) {
@@ -91,7 +92,9 @@ export async function withTenantContext<T>(
 }
 
 /** Liveness probe used by the API/worker health endpoints. */
-export async function checkDatabaseHealth(db: ShooDatabase): Promise<{ ok: boolean; latencyMs: number }> {
+export async function checkDatabaseHealth(
+  db: ShooDatabase,
+): Promise<{ ok: boolean; latencyMs: number }> {
   const started = Date.now();
   try {
     await sql`SELECT 1`.execute(db);

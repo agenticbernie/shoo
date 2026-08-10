@@ -7,8 +7,9 @@
  * error code cannot drift between surfaces. It contains no transport routing and no
  * business authorization.
  */
-export * from './scalars.js';
+
 export * from './enums.js';
-export * from './scope.js';
-export * from './errors.js';
 export * from './envelope.js';
+export * from './errors.js';
+export * from './scalars.js';
+export * from './scope.js';

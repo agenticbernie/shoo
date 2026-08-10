@@ -59,6 +59,9 @@ importers:
       '@shoo/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@shoo/contracts-common':
+        specifier: workspace:*
+        version: link:../../packages/contracts/common
       '@shoo/contracts-http':
         specifier: workspace:*
         version: link:../../packages/contracts/http

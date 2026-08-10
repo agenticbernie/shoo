@@ -1,11 +1,11 @@
 import {
+  asId,
+  instant,
   type MemoryId,
   type OrganizationId,
   type ProjectId,
   type RevisionId,
   type UserId,
-  asId,
-  instant,
   unwrap,
 } from '@shoo/domain-shared';
 import { describe, expect, it } from 'vitest';
@@ -28,7 +28,11 @@ const project = asId<ProjectId>('018f4b1a-0000-7000-8000-0000000000bb');
 const user = asId<UserId>('018f4b1a-0000-7000-8000-0000000000cc');
 const at = instant(1_760_000_000_000);
 
-const subject = { subjectType: 'decision', subjectKey: 'auth-strategy', branchScope: null };
+const subject = {
+  subjectType: 'decision',
+  subjectKey: 'auth-strategy',
+  branchScope: null,
+};
 
 function candidate(overrides: Partial<Parameters<typeof createCandidateMemory>[0]> = {}) {
   return unwrap(
@@ -44,7 +48,12 @@ function candidate(overrides: Partial<Parameters<typeof createCandidateMemory>[0
       claim: 'claimed',
       requestedVisibility: 'project',
       visibilityCeiling: 'project',
-      evidence: [{ evidenceId: asId('018f4b1a-0000-7000-8000-000000000201'), supportType: 'supports' }],
+      evidence: [
+        {
+          evidenceId: asId('018f4b1a-0000-7000-8000-000000000201'),
+          supportType: 'supports',
+        },
+      ],
       createdByUserId: user,
       extractorVersion: '1.0.0',
       ruleVersion: null,
@@ -65,7 +74,10 @@ describe('candidate creation', () => {
   });
 
   it('clamps requested visibility to the caller ceiling', () => {
-    const record = candidate({ requestedVisibility: 'organization', visibilityCeiling: 'project' });
+    const record = candidate({
+      requestedVisibility: 'organization',
+      visibilityCeiling: 'project',
+    });
     expect(currentRevision(record).state.visibility).toBe('project');
   });
 
@@ -244,7 +256,10 @@ describe('correction and supersession', () => {
         contentHash: 'b'.repeat(64),
         reason: 'the earlier statement omitted SSO',
         evidence: [
-          { evidenceId: asId('018f4b1a-0000-7000-8000-000000000202'), supportType: 'supports' },
+          {
+            evidenceId: asId('018f4b1a-0000-7000-8000-000000000202'),
+            supportType: 'supports',
+          },
         ],
         actorUserId: user,
         expectedVersion: record.version,
@@ -288,7 +303,10 @@ describe('correction and supersession', () => {
         contentHash: 'c'.repeat(64),
         reason: 'vendor change approved',
         evidence: [
-          { evidenceId: asId('018f4b1a-0000-7000-8000-000000000203'), supportType: 'supports' },
+          {
+            evidenceId: asId('018f4b1a-0000-7000-8000-000000000203'),
+            supportType: 'supports',
+          },
         ],
         actorUserId: user,
         expectedVersion: canonical.version,
@@ -413,7 +431,11 @@ describe('canonical resolver', () => {
 
   it('returns unknown when no record matches the subject', () => {
     const result = resolveCanonical({
-      subject: { subjectType: 'decision', subjectKey: 'nothing', branchScope: null },
+      subject: {
+        subjectType: 'decision',
+        subjectKey: 'nothing',
+        branchScope: null,
+      },
       requestedScope: { branch: null, worktreeId: null, modulePaths: [] },
       candidates: [candidate()],
       permittedMemoryIds: permitted,
@@ -449,7 +471,10 @@ describe('canonical resolver', () => {
         contentHash: 'b'.repeat(64),
         reason: 'omitted SSO',
         evidence: [
-          { evidenceId: asId('018f4b1a-0000-7000-8000-000000000202'), supportType: 'supports' },
+          {
+            evidenceId: asId('018f4b1a-0000-7000-8000-000000000202'),
+            supportType: 'supports',
+          },
         ],
         actorUserId: user,
         expectedVersion: record.version,

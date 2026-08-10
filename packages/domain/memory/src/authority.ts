@@ -1,4 +1,4 @@
-import { type Result, fail, ok, stateMachine } from '@shoo/domain-shared';
+import { fail, ok, type Result, stateMachine } from '@shoo/domain-shared';
 
 /**
  * The authority model (docs/30 "Authority model", docs/36 "Orthogonal state checks").
@@ -227,7 +227,11 @@ export function checkOrthogonality(state: AuthorityState): Result<AuthorityState
 
   // Verification says nothing about freshness; a verified fact may still be stale. The
   // forbidden case is claiming `expired` while asserting the record is current truth.
-  if (state.verification === 'verified' && state.freshness === 'expired' && state.lineage === 'active') {
+  if (
+    state.verification === 'verified' &&
+    state.freshness === 'expired' &&
+    state.lineage === 'active'
+  ) {
     return fail('INVARIANT_VIOLATION', 'an expired revision cannot remain active current truth', {
       violation: 'verified_implies_current' satisfies OrthogonalityViolation,
     });

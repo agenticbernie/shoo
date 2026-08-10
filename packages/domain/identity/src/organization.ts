@@ -1,16 +1,16 @@
 import {
   type AggregateVersion,
-  type Instant,
+  checkExpectedVersion,
+  fail,
   INITIAL_VERSION,
+  type Instant,
   type MembershipId,
+  nextVersion,
   type OrganizationId,
+  ok,
   type Result,
   type UserId,
   type Versioned,
-  checkExpectedVersion,
-  fail,
-  nextVersion,
-  ok,
 } from '@shoo/domain-shared';
 import type { Role } from './roles.js';
 
@@ -121,7 +121,11 @@ export function suspendMembership(
   if (membership.status === 'removed') {
     return fail('ALREADY_TERMINAL', 'membership is already removed');
   }
-  return ok({ ...membership, status: 'suspended', version: nextVersion(membership.version) });
+  return ok({
+    ...membership,
+    status: 'suspended',
+    version: nextVersion(membership.version),
+  });
 }
 
 export function isMembershipActive(membership: Membership): boolean {

@@ -245,7 +245,13 @@ export const captureBatchResult = z.object({
     .array(z.object({ source_event_id: shortText, reason_code: shortText }))
     .default([]),
   rejected: z
-    .array(z.object({ source_event_id: shortText, reason_code: shortText, message: shortText }))
+    .array(
+      z.object({
+        source_event_id: shortText,
+        reason_code: shortText,
+        message: shortText,
+      }),
+    )
     .default([]),
 });
 export type CaptureBatchResult = z.infer<typeof captureBatchResult>;

@@ -1,4 +1,4 @@
-import { type Result, fail, ok } from './result.js';
+import { fail, ok, type Result } from './result.js';
 
 /**
  * Optimistic concurrency for mutable aggregates (docs/29 "Consistency model").

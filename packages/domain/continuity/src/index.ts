@@ -5,7 +5,8 @@
  * checkpoints and the client capture envelope. It never infers work completion from a
  * session stopping.
  */
-export * from './work-unit.js';
-export * from './session.js';
+
 export * from './checkpoint.js';
 export * from './client-envelope.js';
+export * from './session.js';
+export * from './work-unit.js';

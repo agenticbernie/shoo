@@ -1,0 +1,155 @@
+name: CI
+
+# Pull-request fast path from docs/65 "CI pipeline":
+#   validate -> unit/architecture -> contracts -> database/RLS -> build
+# Long OS/durable/load/security suites run separately and block their release gate.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '24.18.0'
+  PNPM_VERSION: '11.13.0'
+
+jobs:
+  validate:
+    name: lint, typecheck, architecture, unit tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      # Lockfile integrity: CI never resolves a new version silently.
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint and format check
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # FIT-001 / FIT-002 / FIT-025: package boundaries, contract namespace, deferred scope.
+      - name: Architecture fitness
+        run: pnpm architecture:check
+
+      - name: Unit and contract tests
+        run: pnpm test
+
+  database:
+    name: migrations and RLS matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: shoo_migrator
+          POSTGRES_PASSWORD: shoo_dev_password
+          POSTGRES_DB: shoo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U shoo_migrator -d shoo"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      # The request-serving roles are created separately so the RLS matrix runs against a
+      # role that is not the table owner and does not have BYPASSRLS (docs/33).
+      - name: Create runtime roles
+        env:
+          PGPASSWORD: shoo_dev_password
+        run: |
+          psql -h localhost -U shoo_migrator -d shoo -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE shoo_app LOGIN PASSWORD 'shoo_dev_password' NOSUPERUSER NOBYPASSRLS;
+          CREATE ROLE shoo_worker LOGIN PASSWORD 'shoo_dev_password' NOSUPERUSER NOBYPASSRLS;
+          GRANT CONNECT ON DATABASE shoo TO shoo_app, shoo_worker;
+          SQL
+
+      - name: Apply migrations
+        env:
+          DATABASE_MIGRATION_URL: postgres://shoo_migrator:shoo_dev_password@localhost:5432/shoo
+        run: pnpm db:migrate
+
+      # Re-running must be a no-op: a checksum change on applied history fails the build.
+      - name: Re-apply migrations (idempotency)
+        env:
+          DATABASE_MIGRATION_URL: postgres://shoo_migrator:shoo_dev_password@localhost:5432/shoo
+        run: pnpm db:migrate
+
+      - name: RLS matrix and schema invariants (FIT-006)
+        env:
+          SHOO_TEST_DATABASE_URL: postgres://shoo_migrator:shoo_dev_password@localhost:5432/shoo
+          SHOO_TEST_APP_URL: postgres://shoo_app:shoo_dev_password@localhost:5432/shoo
+        run: pnpm --filter @shoo/db-postgres test
+
+  security:
+    name: secret and dependency scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Dependency audit
+        run: pnpm audit --audit-level high || true
+
+      # Secrets never enter the repository, fixtures, logs or screenshots (docs/64).
+      - name: Fixture secret scan
+        run: |
+          if grep -rIE --exclude-dir=node_modules --exclude-dir=.git \
+             '(BEGIN [A-Z ]*PRIVATE KEY|sk_live_|sk_test_[A-Za-z0-9]{16,}|suiprivkey1)' \
+             fixtures/ packages/ apps/ migrations/ 2>/dev/null; then
+            echo "::error::possible secret material found"
+            exit 1
+          fi
+          echo "no secret material found"

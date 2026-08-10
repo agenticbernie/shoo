@@ -1,10 +1,10 @@
 import {
+  asId,
+  instant,
   type OrganizationId,
   type OutboxJobId,
   type ProjectId,
   type UserId,
-  asId,
-  instant,
   unwrap,
 } from '@shoo/domain-shared';
 import { describe, expect, it } from 'vitest';
@@ -47,13 +47,23 @@ describe('outbox job', () => {
   it('backs off a transient failure and dead-letters a permanent one', () => {
     const leased = unwrap(leaseJob(job(), { owner: 'worker-1', leaseMillis: 30_000, at }));
     const transient = unwrap(
-      failJob(leased, { errorCode: 'PROVIDER_TIMEOUT', failureClass: 'transient', jitterFactor: 0.5, at }),
+      failJob(leased, {
+        errorCode: 'PROVIDER_TIMEOUT',
+        failureClass: 'transient',
+        jitterFactor: 0.5,
+        at,
+      }),
     );
     expect(transient.status).toBe('pending');
     expect(transient.nextRunAt.epochMillis).toBeGreaterThan(at.epochMillis);
 
     const permanent = unwrap(
-      failJob(leased, { errorCode: 'SCHEMA_INCOMPATIBLE', failureClass: 'permanent', jitterFactor: 0.5, at }),
+      failJob(leased, {
+        errorCode: 'SCHEMA_INCOMPATIBLE',
+        failureClass: 'permanent',
+        jitterFactor: 0.5,
+        at,
+      }),
     );
     expect(permanent.status).toBe('dead_letter');
   });
@@ -168,8 +178,11 @@ describe('feature flags', () => {
   it('falls back to the default once expired', () => {
     const flag = unwrap(defineFlag({ ...base, key: 'resume.v2' }));
     expect(resolveFlag(flag, { override: true, at })).toBe(true);
-    expect(resolveFlag(flag, { override: true, at: instant(at.epochMillis + 200_000_000) })).toBe(
-      false,
-    );
+    expect(
+      resolveFlag(flag, {
+        override: true,
+        at: instant(at.epochMillis + 200_000_000),
+      }),
+    ).toBe(false);
   });
 });

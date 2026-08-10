@@ -68,7 +68,10 @@ export function duplicateKey(envelope: EventEnvelopeBase): string {
 
 export type EnvelopeParseResult =
   | { readonly outcome: 'accepted'; readonly envelope: EventEnvelopeBase }
-  | { readonly outcome: 'quarantined'; readonly reason: 'unsupported_schema_version' }
+  | {
+      readonly outcome: 'quarantined';
+      readonly reason: 'unsupported_schema_version';
+    }
   | { readonly outcome: 'rejected'; readonly issues: readonly string[] };
 
 /** Version-aware envelope parse. Shape errors and version skew are different outcomes. */

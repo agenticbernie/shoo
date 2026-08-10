@@ -152,7 +152,12 @@ export const askResult = z.object({
     .max(100)
     .default([]),
   suggestions: z
-    .array(z.object({ text: longText, rationale: longText.nullable().default(null) }))
+    .array(
+      z.object({
+        text: longText,
+        rationale: longText.nullable().default(null),
+      }),
+    )
     .max(20)
     .default([]),
   missing_evidence: z.array(shortText).max(50).default([]),

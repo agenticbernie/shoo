@@ -12,9 +12,9 @@
  * SDK, no web framework, no model provider.
  */
 export * from './brand.js';
+export * from './domain-event.js';
 export * from './result.js';
-export * from './time.js';
-export * from './version.js';
 export * from './scope.js';
 export * from './state-machine.js';
-export * from './domain-event.js';
+export * from './time.js';
+export * from './version.js';

@@ -2,7 +2,7 @@ import {
   authorityStatus,
   captureState,
   checkpointReason,
-  clientName,
+  type clientName,
   conflictSeverity,
   longText,
   memoryType,
@@ -232,7 +232,13 @@ export const recallInput = toolInput({
       since: timestamp.nullable().default(null),
       until: timestamp.nullable().default(null),
     })
-    .default({ subject_type: null, subject_key: null, branch: null, since: null, until: null }),
+    .default({
+      subject_type: null,
+      subject_key: null,
+      branch: null,
+      since: null,
+      until: null,
+    }),
   limit: z.number().int().min(1).max(50).default(20),
 });
 export type RecallInput = z.infer<typeof recallInput>;
@@ -253,7 +259,13 @@ export const recallItem = z.object({
 export const recallResult = toolResult({
   items: z.array(recallItem).max(50).default([]),
   conflicts: z
-    .array(z.object({ conflict_id: uuid, subject: typedSubject, severity: conflictSeverity }))
+    .array(
+      z.object({
+        conflict_id: uuid,
+        subject: typedSubject,
+        severity: conflictSeverity,
+      }),
+    )
     .max(50)
     .default([]),
   total_candidates: z.number().int().nonnegative().default(0),

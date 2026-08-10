@@ -1,16 +1,3 @@
-import {
-  type BranchScope,
-  type Instant,
-  type MemoryId,
-  type ProjectId,
-  type Result,
-  type RetrievalRequestId,
-  type RevisionId,
-  type TypedSubject,
-  type WorkUnitId,
-  fail,
-  ok,
-} from '@shoo/domain-shared';
 import type {
   AuthorityStatus,
   FreshnessStatus,
@@ -18,6 +5,19 @@ import type {
   VerificationStatus,
   VisibilityScope,
 } from '@shoo/domain-memory';
+import {
+  type BranchScope,
+  fail,
+  type Instant,
+  type MemoryId,
+  ok,
+  type ProjectId,
+  type Result,
+  type RetrievalRequestId,
+  type RevisionId,
+  type TypedSubject,
+  type WorkUnitId,
+} from '@shoo/domain-shared';
 
 /**
  * Retrieval read model and ranking contract (docs/30 "Hybrid retrieval pipeline",
@@ -121,21 +121,40 @@ export function applyHardRules(
   request: RetrievalRequest,
 ): FilterOutcome {
   if (!candidate.permitted) {
-    return { candidate, excludedBy: 'unauthorized', representAsConflict: false };
+    return {
+      candidate,
+      excludedBy: 'unauthorized',
+      representAsConflict: false,
+    };
   }
 
   const currentStateIntent = request.intent === 'current' || request.intent === 'resume';
 
-  if (currentStateIntent && (candidate.lineage === 'superseded' || candidate.lineage === 'deprecated')) {
-    return { candidate, excludedBy: 'superseded_for_current_intent', representAsConflict: false };
+  if (
+    currentStateIntent &&
+    (candidate.lineage === 'superseded' || candidate.lineage === 'deprecated')
+  ) {
+    return {
+      candidate,
+      excludedBy: 'superseded_for_current_intent',
+      representAsConflict: false,
+    };
   }
 
   if (currentStateIntent && candidate.freshness === 'expired') {
-    return { candidate, excludedBy: 'superseded_for_current_intent', representAsConflict: false };
+    return {
+      candidate,
+      excludedBy: 'superseded_for_current_intent',
+      representAsConflict: false,
+    };
   }
 
   if (candidate.citationCount === 0 && candidate.memoryType !== 'question') {
-    return { candidate, excludedBy: 'missing_citation', representAsConflict: false };
+    return {
+      candidate,
+      excludedBy: 'missing_citation',
+      representAsConflict: false,
+    };
   }
 
   if (
@@ -143,11 +162,19 @@ export function applyHardRules(
     request.scope.branch !== null &&
     candidate.branchScope !== request.scope.branch
   ) {
-    return { candidate, excludedBy: 'out_of_branch_scope', representAsConflict: false };
+    return {
+      candidate,
+      excludedBy: 'out_of_branch_scope',
+      representAsConflict: false,
+    };
   }
 
   if (candidate.memoryType === 'handoff' || candidate.memoryType === 'dependency') {
-    return { candidate, excludedBy: 'reserved_memory_type', representAsConflict: false };
+    return {
+      candidate,
+      excludedBy: 'reserved_memory_type',
+      representAsConflict: false,
+    };
   }
 
   return {

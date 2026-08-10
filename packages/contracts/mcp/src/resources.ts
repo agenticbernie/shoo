@@ -80,7 +80,10 @@ export type SourceUnavailableResult = z.infer<typeof sourceUnavailableResult>;
 export interface McpPromptDefinition {
   readonly name: string;
   readonly description: string;
-  readonly arguments: readonly { readonly name: string; readonly required: boolean }[];
+  readonly arguments: readonly {
+    readonly name: string;
+    readonly required: boolean;
+  }[];
 }
 
 /** Prompts cannot bypass tool permission, confirmation or policy (docs/38). */

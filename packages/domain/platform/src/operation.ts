@@ -1,12 +1,12 @@
 import {
   type DurableOperationId,
+  fail,
   type Instant,
+  isAfter,
   type OperationId,
+  ok,
   type Result,
   type RevisionId,
-  fail,
-  isAfter,
-  ok,
   stateMachine,
 } from '@shoo/domain-shared';
 
@@ -205,7 +205,11 @@ export function markDurablePersisted(
  */
 export function markDurableFailed(
   operation: DurableOperation,
-  input: { readonly errorCode: string; readonly terminal: boolean; readonly at: Instant },
+  input: {
+    readonly errorCode: string;
+    readonly terminal: boolean;
+    readonly at: Instant;
+  },
 ): Result<DurableOperation> {
   if (operation.status === 'durable') {
     return fail('ILLEGAL_TRANSITION', 'a persisted durable operation cannot be marked failed');

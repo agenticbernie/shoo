@@ -56,16 +56,29 @@ describe('parseEvent', () => {
 
   it('quarantines an unsupported envelope schema version instead of rejecting it', () => {
     const result = parseEvent({ ...base, schema_version: 99 });
-    expect(result).toEqual({ outcome: 'quarantined', reason: 'unsupported_schema_version' });
+    expect(result).toEqual({
+      outcome: 'quarantined',
+      reason: 'unsupported_schema_version',
+    });
   });
 
   it('quarantines reserved coordination event types', () => {
-    const result = parseEvent({ ...base, event_type: 'handoff.requested', payload: {} });
-    expect(result).toEqual({ outcome: 'quarantined', reason: 'reserved_event_type' });
+    const result = parseEvent({
+      ...base,
+      event_type: 'handoff.requested',
+      payload: {},
+    });
+    expect(result).toEqual({
+      outcome: 'quarantined',
+      reason: 'reserved_event_type',
+    });
   });
 
   it('rejects a payload that violates its declared minimum', () => {
-    const result = parseEvent({ ...base, payload: { session_id: 'not-a-uuid' } });
+    const result = parseEvent({
+      ...base,
+      payload: { session_id: 'not-a-uuid' },
+    });
     expect(result.outcome).toBe('rejected');
   });
 

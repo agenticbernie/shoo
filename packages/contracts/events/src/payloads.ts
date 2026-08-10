@@ -18,7 +18,6 @@ import {
   retrievalIntent,
   routeDecision,
   semver,
-  sessionState,
   sha256Hex,
   shortText,
   timestamp,

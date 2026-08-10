@@ -6,9 +6,9 @@
  * (docs/64 "Contract workflow").
  */
 export * from './common.js';
-export * from './identity.js';
 export * from './continuity.js';
-export * from './memory.js';
+export * from './identity.js';
 export * from './intelligence.js';
+export * from './memory.js';
 export * from './platform.js';
 export * from './routes.js';

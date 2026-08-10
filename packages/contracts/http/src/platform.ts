@@ -26,10 +26,7 @@ export const syncPolicyRule = z.object({
       .max(10)
       .default([]),
     path_globs: z.array(shortText).max(100).default([]),
-    min_verification: z
-      .enum(['unverified', 'corroborated', 'verified'])
-      .nullable()
-      .default(null),
+    min_verification: z.enum(['unverified', 'corroborated', 'verified']).nullable().default(null),
   }),
   route: routeDecision,
   visibility_ceiling: visibilityScope,

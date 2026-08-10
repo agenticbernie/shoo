@@ -1,4 +1,11 @@
-import { type Instant, type Result, type RevisionId, type UserId, fail, ok } from '@shoo/domain-shared';
+import {
+  fail,
+  type Instant,
+  ok,
+  type Result,
+  type RevisionId,
+  type UserId,
+} from '@shoo/domain-shared';
 
 /**
  * Supersession lineage (docs/36 `memory.supersession_edges`).
@@ -11,7 +18,11 @@ import { type Instant, type Result, type RevisionId, type UserId, fail, ok } fro
  * - edges are append-only — history is never rewritten.
  */
 
-export type SupersessionReason = 'correction' | 'supersession' | 'retraction' | 'conflict_resolution';
+export type SupersessionReason =
+  | 'correction'
+  | 'supersession'
+  | 'retraction'
+  | 'conflict_resolution';
 
 export interface SupersessionEdge {
   readonly predecessorRevisionId: RevisionId;
@@ -110,9 +121,6 @@ export function lineageAncestry(
   return ancestry;
 }
 
-export function isSuperseded(
-  edges: readonly SupersessionEdge[],
-  revisionId: RevisionId,
-): boolean {
+export function isSuperseded(edges: readonly SupersessionEdge[], revisionId: RevisionId): boolean {
   return edges.some((edge) => edge.predecessorRevisionId === revisionId);
 }

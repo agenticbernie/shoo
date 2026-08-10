@@ -4,5 +4,5 @@
  * contract" and "Event payload minimums").
  */
 export * from './envelope.js';
-export * from './payloads.js';
 export * from './parse.js';
+export * from './payloads.js';

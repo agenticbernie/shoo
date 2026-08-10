@@ -1,5 +1,5 @@
 import type { OrganizationId, ProjectId, SessionId, WorkUnitId } from './brand.js';
-import { type Result, fail, ok } from './result.js';
+import { fail, ok, type Result } from './result.js';
 
 /**
  * Tenant scope value object.

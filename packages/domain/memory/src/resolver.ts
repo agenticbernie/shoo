@@ -1,14 +1,14 @@
 import {
   type BranchScope,
-  type Instant,
-  type RevisionId,
-  type TypedSubject,
   branchScopeApplies,
+  type Instant,
   isAfter,
+  type RevisionId,
   subjectEquals,
+  type TypedSubject,
 } from '@shoo/domain-shared';
 import { authorityRank, isAcceptedAuthority, isCurrentStateEligible } from './authority.js';
-import { type MemoryRecord, type MemoryRevision, currentRevision } from './memory.js';
+import { currentRevision, type MemoryRecord, type MemoryRevision } from './memory.js';
 import { isSuperseded, resolveLineageHead } from './supersession.js';
 
 /**
@@ -76,7 +76,11 @@ export function resolveCanonical(input: ResolveInput): ResolvedTruth {
       (record.subject.subjectType === input.subject.subjectType &&
         record.subject.subjectKey === input.subject.subjectKey &&
         branchScopeApplies(
-          { branch: record.subject.branchScope, worktreeId: null, modulePaths: [] },
+          {
+            branch: record.subject.branchScope,
+            worktreeId: null,
+            modulePaths: [],
+          },
           input.requestedScope,
         )),
   );
@@ -136,19 +140,26 @@ export function resolveCanonical(input: ResolveInput): ResolvedTruth {
   }
 
   // 5. prefer accepted authority over agent claim, regardless of recency
-  const accepted = considered.filter((entry) => isAcceptedAuthority(entry.revision.state.authority));
+  const accepted = considered.filter((entry) =>
+    isAcceptedAuthority(entry.revision.state.authority),
+  );
   const pool = accepted.length > 0 ? accepted : considered;
   if (accepted.length > 0 && accepted.length !== considered.length) {
     reasons.push('preferred:accepted_authority_over_claim');
   }
 
-  const highestRank = Math.max(...pool.map((entry) => authorityRank(entry.revision.state.authority)));
+  const highestRank = Math.max(
+    ...pool.map((entry) => authorityRank(entry.revision.state.authority)),
+  );
   const topAuthority = pool.filter(
     (entry) => authorityRank(entry.revision.state.authority) === highestRank,
   );
 
   // 6. concurrent active authoritative values are a conflict, never a recency pick
-  if (topAuthority.length > 1 && isAcceptedAuthority(topAuthority[0]?.revision.state.authority ?? 'session')) {
+  if (
+    topAuthority.length > 1 &&
+    isAcceptedAuthority(topAuthority[0]?.revision.state.authority ?? 'session')
+  ) {
     const distinctContent = new Set(topAuthority.map((entry) => entry.revision.contentHash));
     if (distinctContent.size > 1) {
       return {

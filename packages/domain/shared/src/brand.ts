@@ -10,7 +10,8 @@ declare const brand: unique symbol;
 
 export type Brand<T, B extends string> = T & { readonly [brand]: B };
 
-const UUID_PATTERN = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const UUID_PATTERN =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 export function isUuidLike(value: string): boolean {
   return UUID_PATTERN.test(value);

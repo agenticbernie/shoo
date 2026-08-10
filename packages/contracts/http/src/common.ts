@@ -1,9 +1,4 @@
-import {
-  aggregateVersion,
-  cursor,
-  idempotencyKey,
-  uuid,
-} from '@shoo/contracts-common';
+import { aggregateVersion, cursor, idempotencyKey, uuid } from '@shoo/contracts-common';
 import { z } from 'zod';
 
 /** Base path of the current HTTP major version (docs/37 "API principles"). */

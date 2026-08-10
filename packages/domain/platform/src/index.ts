@@ -5,7 +5,8 @@
  * (MemWal/Walrus) operation state, immutable sync-policy versions and routing decisions,
  * compatibility records and feature flags.
  */
-export * from './outbox.js';
-export * from './operation.js';
-export * from './policy.js';
+
 export * from './flags.js';
+export * from './operation.js';
+export * from './outbox.js';
+export * from './policy.js';

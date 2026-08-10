@@ -100,7 +100,9 @@ describe.skipIf(!enabled)('tenant isolation and schema invariants', () => {
 
   it('denies cross-tenant reads', async () => {
     const count = await asTenant(ORG_B, PROJECT_B, async () => {
-      const { rows } = await app.query('SELECT count(*)::int AS count FROM memory.memory_revisions');
+      const { rows } = await app.query(
+        'SELECT count(*)::int AS count FROM memory.memory_revisions',
+      );
       return rows[0]?.count as number;
     });
     expect(count).toBe(0);
@@ -108,7 +110,9 @@ describe.skipIf(!enabled)('tenant isolation and schema invariants', () => {
 
   it('allows reads inside the caller tenant', async () => {
     const count = await asTenant(ORG_A, PROJECT_A, async () => {
-      const { rows } = await app.query('SELECT count(*)::int AS count FROM memory.memory_revisions');
+      const { rows } = await app.query(
+        'SELECT count(*)::int AS count FROM memory.memory_revisions',
+      );
       return rows[0]?.count as number;
     });
     expect(count).toBe(1);
@@ -162,8 +166,6 @@ describe.skipIf(!enabled)('tenant isolation and schema invariants', () => {
   });
 
   it('keeps the event ledger append-only', async () => {
-    await expect(owner.query('DELETE FROM platform.event_ledger')).rejects.toThrow(
-      /append-only/,
-    );
+    await expect(owner.query('DELETE FROM platform.event_ledger')).rejects.toThrow(/append-only/);
   });
 });

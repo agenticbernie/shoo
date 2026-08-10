@@ -1,11 +1,12 @@
-import {
-  acceptedEnvelope,
-  pageEnvelope,
-  successEnvelope,
-  uuid,
-} from '@shoo/contracts-common';
+import { acceptedEnvelope, pageEnvelope, successEnvelope, uuid } from '@shoo/contracts-common';
 import { z } from 'zod';
-import { HTTP_API_BASE_PATH, pageQuery, previewImpact, projectParams, projectResourceParams } from './common.js';
+import {
+  HTTP_API_BASE_PATH,
+  pageQuery,
+  previewImpact,
+  projectParams,
+  projectResourceParams,
+} from './common.js';
 import {
   captureBatchRequest,
   captureBatchResult,
@@ -25,8 +26,8 @@ import {
 import {
   createProjectRequest,
   deviceView,
-  meView,
   memwalBindingView,
+  meView,
   projectView,
   reconcileDelegateRequest,
   reconcileRepositoryRequest,

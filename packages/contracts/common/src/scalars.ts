@@ -9,9 +9,9 @@ import { z } from 'zod';
  * - transport schemas validate shape only. They never authorize an action.
  */
 
-const UUID_PATTERN = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-const RFC3339_PATTERN =
-  /^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})$/;
+const UUID_PATTERN =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const RFC3339_PATTERN = /^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})$/;
 const SEMVER_PATTERN =
   /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z-.]+)?(?:\+[0-9A-Za-z-.]+)?$/;
 const SHA256_HEX_PATTERN = /^[0-9a-f]{64}$/;
@@ -26,7 +26,9 @@ export const timestamp = z.string().regex(RFC3339_PATTERN, 'must be an RFC3339 t
 export const semver = z.string().regex(SEMVER_PATTERN, 'must be a semantic version');
 
 /** Lowercase hex SHA-256 digest. */
-export const sha256Hex = z.string().regex(SHA256_HEX_PATTERN, 'must be a lowercase sha256 hex digest');
+export const sha256Hex = z
+  .string()
+  .regex(SHA256_HEX_PATTERN, 'must be a lowercase sha256 hex digest');
 
 /**
  * Caller-supplied idempotency key. Opaque to the server: it is only ever compared,

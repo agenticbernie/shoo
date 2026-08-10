@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFERRED_MCP_TOOL_NAMES, MCP_TOOLS, MCP_TOOL_NAMES } from './tools.js';
+import { DEFERRED_MCP_TOOL_NAMES, MCP_TOOL_NAMES, MCP_TOOLS } from './tools.js';
 
 describe('MCP tool registry', () => {
   it('exposes exactly the nine MVP tools (docs/38)', () => {

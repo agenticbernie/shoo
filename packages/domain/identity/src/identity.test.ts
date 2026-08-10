@@ -1,10 +1,10 @@
 import {
+  asId,
   type GrantId,
+  instant,
   type OrganizationId,
   type ProjectId,
   type UserId,
-  asId,
-  instant,
   unwrap,
 } from '@shoo/domain-shared';
 import { describe, expect, it } from 'vitest';

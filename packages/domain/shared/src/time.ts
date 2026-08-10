@@ -1,4 +1,4 @@
-import { type Result, fail, ok } from './result.js';
+import { fail, ok, type Result } from './result.js';
 
 /**
  * Time in the Shoo domain.

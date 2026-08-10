@@ -1,13 +1,13 @@
 import {
   type CheckpointId,
   type EvidenceId,
+  fail,
   type Instant,
+  ok,
   type ProjectId,
   type Result,
   type SessionId,
   type WorkUnitId,
-  fail,
-  ok,
 } from '@shoo/domain-shared';
 
 /**

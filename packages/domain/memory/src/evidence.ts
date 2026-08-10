@@ -1,12 +1,12 @@
 import {
   type EvidenceId,
+  fail,
   type Instant,
   type OrganizationId,
+  ok,
   type ProjectId,
   type Result,
   type SessionId,
-  fail,
-  ok,
 } from '@shoo/domain-shared';
 
 /**

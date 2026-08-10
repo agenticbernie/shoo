@@ -1,13 +1,13 @@
 import {
+  fail,
   type Instant,
+  isAfter,
   type OrganizationId,
   type OutboxJobId,
-  type ProjectId,
-  type Result,
-  fail,
-  isAfter,
   ok,
+  type ProjectId,
   plusMillis,
+  type Result,
   stateMachine,
 } from '@shoo/domain-shared';
 
@@ -120,10 +120,16 @@ export function isRunnable(job: OutboxJob, at: Instant): boolean {
 
 export function leaseJob(
   job: OutboxJob,
-  input: { readonly owner: string; readonly leaseMillis: number; readonly at: Instant },
+  input: {
+    readonly owner: string;
+    readonly leaseMillis: number;
+    readonly at: Instant;
+  },
 ): Result<OutboxJob> {
   if (!isRunnable(job, input.at)) {
-    return fail('NOT_ELIGIBLE', 'job is not runnable at this time', { status: job.status });
+    return fail('NOT_ELIGIBLE', 'job is not runnable at this time', {
+      status: job.status,
+    });
   }
   const transition = outboxStateMachine.transition(
     job.status === 'leased' ? 'leased' : job.status,
@@ -161,7 +167,10 @@ export function completeJob(job: OutboxJob, at: Instant): Result<OutboxJob> {
  */
 export function backoffMillis(attempts: number, jitterFactor: number): number {
   const clampedJitter = Math.min(Math.max(jitterFactor, 0), 1);
-  const exponential = Math.min(BASE_BACKOFF_MILLIS * 2 ** Math.max(attempts - 1, 0), MAX_BACKOFF_MILLIS);
+  const exponential = Math.min(
+    BASE_BACKOFF_MILLIS * 2 ** Math.max(attempts - 1, 0),
+    MAX_BACKOFF_MILLIS,
+  );
   return Math.round(exponential * (0.5 + clampedJitter * 0.5));
 }
 
@@ -213,7 +222,13 @@ export function failJob(
 export function cancelJob(job: OutboxJob, at: Instant): Result<OutboxJob> {
   const transition = outboxStateMachine.transition(job.status, 'cancelled');
   if (!transition.ok) return transition;
-  return ok({ ...job, status: 'cancelled', leaseOwner: null, leaseExpiresAt: null, updatedAt: at });
+  return ok({
+    ...job,
+    status: 'cancelled',
+    leaseOwner: null,
+    leaseExpiresAt: null,
+    updatedAt: at,
+  });
 }
 
 /** Queue age is the SLI for outbox freshness (docs/42, FIT-015). */

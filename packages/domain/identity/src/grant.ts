@@ -1,21 +1,24 @@
 import {
   type AggregateVersion,
-  type DeviceId,
+  checkExpectedVersion,
+  fail,
   type GrantId,
   INITIAL_VERSION,
   type Instant,
+  isAfter,
+  nextVersion,
+  ok,
   type ProjectId,
   type Result,
   type UserId,
   type Versioned,
-  checkExpectedVersion,
-  fail,
-  isAfter,
-  nextVersion,
-  ok,
 } from '@shoo/domain-shared';
 import { type Action, type Role, roleAllows, roleRank } from './roles.js';
-import { type VisibilityScope, narrowestVisibility, withinVisibilityCeiling } from './visibility.js';
+import {
+  narrowestVisibility,
+  type VisibilityScope,
+  withinVisibilityCeiling,
+} from './visibility.js';
 
 /**
  * Project grants (docs/36 `iam.project_grants`).
@@ -131,10 +134,18 @@ export function effectiveAuthority(input: {
   readonly membershipCeiling: VisibilityScope;
   readonly grant: ProjectGrant | null;
   readonly at: Instant;
-}): { readonly role: Role; readonly visibilityCeiling: VisibilityScope; readonly active: boolean } {
+}): {
+  readonly role: Role;
+  readonly visibilityCeiling: VisibilityScope;
+  readonly active: boolean;
+} {
   const { membershipRole, membershipCeiling, grant, at } = input;
   if (grant === null) {
-    return { role: membershipRole, visibilityCeiling: membershipCeiling, active: true };
+    return {
+      role: membershipRole,
+      visibilityCeiling: membershipCeiling,
+      active: true,
+    };
   }
   const active = isGrantActive(grant, at);
   const role = roleRank(grant.role) <= roleRank(membershipRole) ? grant.role : membershipRole;

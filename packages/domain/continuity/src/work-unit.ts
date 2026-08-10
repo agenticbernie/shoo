@@ -1,20 +1,20 @@
 import {
   type AggregateVersion,
   type BranchScope,
+  checkExpectedVersion,
   type EvidenceId,
+  fail,
   INITIAL_VERSION,
   type Instant,
+  nextVersion,
   type OrganizationId,
+  ok,
   type ProjectId,
   type Result,
+  stateMachine,
   type UserId,
   type Versioned,
   type WorkUnitId,
-  checkExpectedVersion,
-  fail,
-  nextVersion,
-  ok,
-  stateMachine,
 } from '@shoo/domain-shared';
 
 /**

@@ -1,42 +1,46 @@
 import {
   type AggregateVersion,
+  checkExpectedVersion,
+  fail,
   INITIAL_VERSION,
   type Instant,
   type MemoryId,
+  nextVersion,
   type OrganizationId,
+  ok,
   type ProjectId,
   type Result,
   type RevisionId,
+  subjectEquals,
   type TypedSubject,
   type UserId,
   type Versioned,
-  checkExpectedVersion,
-  fail,
-  nextVersion,
-  ok,
-  subjectEquals,
 } from '@shoo/domain-shared';
 import {
   type AuthorityState,
   type AuthorityStatus,
-  type ClaimStatus,
-  type DurabilityStatus,
-  type FreshnessStatus,
-  type VerificationStatus,
-  type VisibilityScope,
   authorityRank,
   authorityStateMachine,
+  type ClaimStatus,
   candidateState,
   checkOrthogonality,
+  type DurabilityStatus,
   durabilityStateMachine,
+  type FreshnessStatus,
   isAcceptedAuthority,
   isCurrentStateEligible,
   lineageStateMachine,
+  type VerificationStatus,
+  type VisibilityScope,
   verificationStateMachine,
   visibilityRank,
 } from './authority.js';
 import type { EvidenceSupport } from './evidence.js';
-import { type SupersessionEdge, type SupersessionReason, addSupersessionEdge } from './supersession.js';
+import {
+  addSupersessionEdge,
+  type SupersessionEdge,
+  type SupersessionReason,
+} from './supersession.js';
 
 /**
  * Memory record aggregate (docs/36 `memory.memory_records` / `memory.memory_revisions`,
@@ -201,11 +205,7 @@ export function createCandidateMemory(input: CreateCandidateInput): Result<Memor
 
 // --- axis transitions on the current revision -------------------------------
 
-function replaceRevision(
-  record: MemoryRecord,
-  updated: MemoryRevision,
-  at: Instant,
-): MemoryRecord {
+function replaceRevision(record: MemoryRecord, updated: MemoryRevision, at: Instant): MemoryRecord {
   return {
     ...record,
     revisions: record.revisions.map((revision) =>
@@ -238,7 +238,10 @@ export function changeVerification(
   );
   if (!transition.ok) return transition;
 
-  const state: AuthorityState = { ...revision.state, verification: input.verification };
+  const state: AuthorityState = {
+    ...revision.state,
+    verification: input.verification,
+  };
   const orthogonality = checkOrthogonality(state);
   if (!orthogonality.ok) return orthogonality;
 
@@ -294,7 +297,10 @@ export function acceptRevision(record: MemoryRecord, input: AcceptInput): Result
   );
   if (!transition.ok) return transition;
 
-  const state: AuthorityState = { ...revision.state, authority: input.requestedAuthority };
+  const state: AuthorityState = {
+    ...revision.state,
+    authority: input.requestedAuthority,
+  };
   const orthogonality = checkOrthogonality(state);
   if (!orthogonality.ok) return orthogonality;
 
@@ -393,7 +399,10 @@ export function restrictVisibility(
     });
   }
 
-  const state: AuthorityState = { ...revision.state, visibility: input.visibility };
+  const state: AuthorityState = {
+    ...revision.state,
+    visibility: input.visibility,
+  };
   const orthogonality = checkOrthogonality(state);
   if (!orthogonality.ok) return orthogonality;
 
@@ -416,13 +425,13 @@ export function changeDurability(
   if (revision === undefined) {
     return fail('INVALID_ARGUMENT', 'revision does not belong to this memory');
   }
-  const transition = durabilityStateMachine.transition(
-    revision.state.durability,
-    input.durability,
-  );
+  const transition = durabilityStateMachine.transition(revision.state.durability, input.durability);
   if (!transition.ok) return transition;
 
-  const state: AuthorityState = { ...revision.state, durability: input.durability };
+  const state: AuthorityState = {
+    ...revision.state,
+    durability: input.durability,
+  };
   const orthogonality = checkOrthogonality(state);
   if (!orthogonality.ok) return orthogonality;
 
@@ -445,7 +454,10 @@ export function changeFreshness(
   if (revision === undefined) {
     return fail('INVALID_ARGUMENT', 'revision does not belong to this memory');
   }
-  const state: AuthorityState = { ...revision.state, freshness: input.freshness };
+  const state: AuthorityState = {
+    ...revision.state,
+    freshness: input.freshness,
+  };
   const orthogonality = checkOrthogonality(state);
   if (!orthogonality.ok) return orthogonality;
 
@@ -509,10 +521,7 @@ export interface SupersedeInput {
 }
 
 /** Explicit lineage mutation (docs/37 `:supersede`, docs/38 `shoo.supersede_memory`). */
-export function supersedeMemory(
-  record: MemoryRecord,
-  input: SupersedeInput,
-): Result<MemoryRecord> {
+export function supersedeMemory(record: MemoryRecord, input: SupersedeInput): Result<MemoryRecord> {
   return supersedeInternal(record, {
     ...input,
     supersessionReason: 'supersession',
@@ -626,7 +635,11 @@ function supersedeInternal(
 
 export function markConflicted(
   record: MemoryRecord,
-  input: { readonly revisionId: RevisionId; readonly expectedVersion: AggregateVersion; readonly at: Instant },
+  input: {
+    readonly revisionId: RevisionId;
+    readonly expectedVersion: AggregateVersion;
+    readonly at: Instant;
+  },
 ): Result<MemoryRecord> {
   const versionCheck = checkExpectedVersion(record.version, input.expectedVersion);
   if (!versionCheck.ok) return versionCheck;

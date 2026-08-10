@@ -1,14 +1,14 @@
 import {
   type DeviceId,
+  fail,
   type Instant,
+  isAfter,
   type OrganizationId,
+  ok,
   type ProjectId,
   type Result,
   type SessionId,
   type WorkUnitId,
-  fail,
-  isAfter,
-  ok,
 } from '@shoo/domain-shared';
 import type { ClientName } from './session.js';
 

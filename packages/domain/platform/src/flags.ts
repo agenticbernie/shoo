@@ -1,4 +1,4 @@
-import { type Instant, type Result, type UserId, fail, isAfter, ok } from '@shoo/domain-shared';
+import { fail, type Instant, isAfter, ok, type Result, type UserId } from '@shoo/domain-shared';
 
 /**
  * Feature flags (docs/65 "Feature-flag policy").

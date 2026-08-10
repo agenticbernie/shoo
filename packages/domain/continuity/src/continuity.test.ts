@@ -1,15 +1,15 @@
 import {
+  asId,
   type CheckpointId,
   type DeviceId,
   type EvidenceId,
+  instant,
   type OrganizationId,
   type ProjectId,
   type SessionId,
   type UserId,
-  type WorkUnitId,
-  asId,
-  instant,
   unwrap,
+  type WorkUnitId,
 } from '@shoo/domain-shared';
 import { describe, expect, it } from 'vitest';
 import { buildCheckpoint, checkpointIdentityKey } from './checkpoint.js';
@@ -24,7 +24,11 @@ const device = asId<DeviceId>('018f4b1a-0000-7000-8000-0000000000dd');
 const workUnitId = asId<WorkUnitId>('018f4b1a-0000-7000-8000-000000000001');
 const sessionId = asId<SessionId>('018f4b1a-0000-7000-8000-000000000002');
 const at = instant(1_760_000_000_000);
-const scope = { branch: 'feature/auth', worktreeId: null, modulePaths: ['src/auth'] };
+const scope = {
+  branch: 'feature/auth',
+  worktreeId: null,
+  modulePaths: ['src/auth'],
+};
 
 function workUnit() {
   return unwrap(
@@ -190,7 +194,9 @@ describe('checkpoint', () => {
   });
 
   it('records degraded capture as partial completeness', () => {
-    expect(unwrap(buildCheckpoint({ ...base, captureDegraded: true })).completeness).toBe('partial');
+    expect(unwrap(buildCheckpoint({ ...base, captureDegraded: true })).completeness).toBe(
+      'partial',
+    );
   });
 
   it('drops empty claims instead of turning them into facts', () => {
@@ -240,7 +246,12 @@ describe('client envelope', () => {
   });
 
   it('orders one adapter stream by source sequence, not wall clock', () => {
-    const later = { ...envelope, sourceEventId: 'native-2', sourceSequence: 2, occurredAt: instant(at.epochMillis - 5_000) };
+    const later = {
+      ...envelope,
+      sourceEventId: 'native-2',
+      sourceSequence: 2,
+      occurredAt: instant(at.epochMillis - 5_000),
+    };
     expect(compareEnvelopes(envelope, later)).toBeLessThan(0);
   });
 });

@@ -1,24 +1,24 @@
 import {
   type AggregateVersion,
   type ConflictId,
+  checkExpectedVersion,
   type EvidenceId,
+  fail,
   INITIAL_VERSION,
   type Instant,
+  nextVersion,
   type OrganizationId,
+  ok,
   type ProjectId,
   type ResolutionId,
   type Result,
   type RevisionId,
+  stateMachine,
+  subjectScopeFingerprint,
   type TenantScope,
   type TypedSubject,
   type UserId,
   type Versioned,
-  checkExpectedVersion,
-  fail,
-  nextVersion,
-  ok,
-  stateMachine,
-  subjectScopeFingerprint,
 } from '@shoo/domain-shared';
 
 /**
@@ -123,10 +123,7 @@ export interface ResolveConflictInput {
   readonly expectedVersion: AggregateVersion;
 }
 
-export function resolveConflict(
-  conflict: Conflict,
-  input: ResolveConflictInput,
-): Result<Conflict> {
+export function resolveConflict(conflict: Conflict, input: ResolveConflictInput): Result<Conflict> {
   const versionCheck = checkExpectedVersion(conflict.version, input.expectedVersion);
   if (!versionCheck.ok) return versionCheck;
 
@@ -190,7 +187,11 @@ export function beginResolving(
   if (!versionCheck.ok) return versionCheck;
   const transition = conflictStateMachine.transition(conflict.state, 'resolving');
   if (!transition.ok) return transition;
-  return ok({ ...conflict, state: 'resolving', version: nextVersion(conflict.version) });
+  return ok({
+    ...conflict,
+    state: 'resolving',
+    version: nextVersion(conflict.version),
+  });
 }
 
 export function isConflictOpen(conflict: Conflict): boolean {

@@ -1,11 +1,11 @@
 import {
   type EvidenceId,
+  fail,
   type Instant,
+  ok,
   type Result,
   type RetrievalRequestId,
   type RevisionId,
-  fail,
-  ok,
 } from '@shoo/domain-shared';
 
 /**
@@ -16,7 +16,13 @@ import {
  * insufficient the answer says so and names what is missing — it never fills the gap.
  */
 
-export type AskIntent = 'current' | 'history' | 'rationale' | 'occurrence' | 'resume' | 'unsupported';
+export type AskIntent =
+  | 'current'
+  | 'history'
+  | 'rationale'
+  | 'occurrence'
+  | 'resume'
+  | 'unsupported';
 
 export type ExcerptPolicy = 'permitted' | 'restricted' | 'local_unavailable';
 
