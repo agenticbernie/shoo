@@ -1,0 +1,27 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "packages/contracts/*"
+  - "packages/domain/*"
+  - "tooling/*"
+
+# Native/postinstall builds explicitly reviewed and allowed (docs/64 security standards).
+allowBuilds:
+  better-sqlite3: true # encrypted local store binding
+  esbuild: true # tsx / vitest transform pipeline
+  sharp: true # Next.js image optimization
+
+# Shared dependency versions. Pins come from docs/63 where the document is
+# explicit; everything else is a current-stable choice recorded here so every
+# workspace package resolves the same version.
+catalog:
+  fastify: 5.10.0
+  kysely: 0.29.3
+  next: 16.2.10
+  react: 19.2.8
+  react-dom: 19.2.8
+  zod: 4.4.3
+
+minimumReleaseAgeExclude:
+  - dependency-cruiser@18.2.0
+  - tsx@4.23.12

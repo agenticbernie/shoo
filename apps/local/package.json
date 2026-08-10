@@ -1,0 +1,32 @@
+{
+  "name": "@shoo/local",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shoo Local runtime and CLI (capture, spool, policy, local MCP) composition root.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "shoo": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@shoo/application": "workspace:*",
+    "@shoo/config": "workspace:*",
+    "@shoo/contracts-events": "workspace:*",
+    "@shoo/local-store": "workspace:*",
+    "@shoo/observability": "workspace:*",
+    "commander": "15.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "tsx": "4.23.12",
+    "typescript": "5.9.3"
+  }
+}

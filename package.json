@@ -1,0 +1,37 @@
+{
+  "name": "shoo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shoo monorepo — agent work continuity, evidence-backed project memory and cited context.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@11.13.0",
+  "engines": {
+    "node": ">=22.18.0",
+    "pnpm": ">=11.13.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "architecture:check": "pnpm --filter @shoo/architecture-tests run check",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @shoo/db-postgres run migrate",
+    "db:reset": "pnpm --filter @shoo/db-postgres run reset",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.7",
+    "@types/node": "24.13.3",
+    "dependency-cruiser": "18.2.0",
+    "tsx": "4.23.12",
+    "turbo": "2.10.5",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}
